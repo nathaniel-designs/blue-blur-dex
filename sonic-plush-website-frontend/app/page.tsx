@@ -25,7 +25,7 @@ export default async function Page() {
       )}
       <footer className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:justify-between">
-          <p>Blue Blur Archive: a personal plush collection.</p>
+          <p>Blue Blur Dex: a plush archive.</p>
           <p>Sonic the Hedgehog is a trademark of SEGA. Fan project.</p>
         </div>
       </footer>
