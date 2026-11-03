@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from fastapi.responses import JSONResponse, Response
 from fastapi.encoders import jsonable_encoder
 import json
+from fastapi.middleware.cors import CORSMiddleware
 
 #error handling
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -24,9 +25,23 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from .auth import create_access_token, verify_password, get_password_hash
 
-
+#frontend
+import httpx
 
 app = FastAPI()
+
+@app.middleware("http")
+async def redirect_trailing_slash(request, call_next):
+    response = await call_next(request)
+    return response
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 models.Base.metadata.create_all(bind = engine)
 
 #Add authentication routes.
@@ -38,7 +53,7 @@ class PlushBase(BaseModel):
     releaseyear: int
      
 
-#dependency to get the database session
+#Dependency to get the database session
 def get_db():
     db = SessionLocal()
     try:
@@ -48,7 +63,7 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
-#returns entire database
+#Returns entire database
 @app.get("/plushies/all")
 def get_all_plushies(db: Session = Depends(get_db)):
     jsonableplush = db.query(models.PlushTable).order_by(models.PlushTable.id.asc()).all()
@@ -63,7 +78,7 @@ async def get_plush(plush_id: int, db: db_dependency):
           raise HTTPException(status_code = 404, detail = "Plush not found!")
      return result
 
-#add new plushie to database
+#Add new plushie to database
 @app.post("/plushies/")
 async def create_plush(plush: PlushBase, db: db_dependency):
     db_plush = models.PlushTable(
@@ -77,10 +92,10 @@ async def create_plush(plush: PlushBase, db: db_dependency):
     db.refresh(db_plush)
     return db_plush
 
-#database search function w/ pagination
+#Database search function w/ pagination
 @app.get("/search/")
 def search_plushies(
-    q: Optional[str] = None,  # Optional query parameter 'q'
+    q: Optional[str] = None,  #Optional query parameter 'q'
     character: Optional[str] = None,
     variation: Optional[str] = None,
     set: Optional[str] = None,
@@ -196,10 +211,10 @@ async def handle_sqlalchemy_error(request: Request, exc: SQLAlchemyError):
         content={"message": "Database error", "detail": str(exc)}
     )
 
-#login
+#Login
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl = "token")
 
-#register user
+#Register user
 @app.post("/register")
 def register(form_data:OAuth2PasswordRequestForm = Depends(), db:Session = Depends(get_db)):
     existing_user = db.query(models.User).filter(models.User.username == form_data.username).first()
@@ -213,7 +228,7 @@ def register(form_data:OAuth2PasswordRequestForm = Depends(), db:Session = Depen
         "msg": "User registered successfully!"
     }
 
-#user login
+#User login
 @app.post("/token")
 def login(form_data:OAuth2PasswordRequestForm = Depends(), db:Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == form_data.username).first()
