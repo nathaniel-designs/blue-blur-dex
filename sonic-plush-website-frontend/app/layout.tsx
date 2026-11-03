@@ -7,7 +7,7 @@ const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-br
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans' })
 
 export const metadata: Metadata = {
-  title: 'Blue Blur Archive — Sonic Plush Collection',
+  title: 'Blue Blur Dex — Sonic Plush Archive',
   description:
     'A catalog of Sonic the Hedgehog plushies from 1991 onward, organized by release year and set.',
   generator: 'v0.app',
