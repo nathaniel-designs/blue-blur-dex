@@ -18,7 +18,7 @@ export function ArchiveHero({ plushies }: { plushies: Plush[] }) {
       <div className="mx-auto flex max-w-6xl flex-col gap-12 px-4 pt-6 pb-14 md:pb-20">
         <div className="flex items-center gap-3">
           <span aria-hidden="true" className="size-5 rounded-full border-4 border-accent" />
-          <span className="font-heading text-lg font-bold tracking-tight">Blue Blur Archive</span>
+          <span className="font-heading text-lg font-bold tracking-tight">Blue Blur Dex</span>
         </div>
 
         <div className="flex flex-col gap-6">
