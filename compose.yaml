@@ -15,6 +15,30 @@ services:
       - 8000:8000
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
+  
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: sonic-postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=sonicgresql
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=local_plush_pass
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
+
 
 # The commented out section below is an example of how to define a PostgreSQL
 # database that your application can use. `depends_on` tells Docker Compose to

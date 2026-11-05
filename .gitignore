@@ -61,3 +61,10 @@ __pypackages__/
 env/
 env.bak/
 venv.bak/
+
+# Local database backups
+/backup/
+/sonic_backup.dump
+
+# macOS
+.DS_Store
